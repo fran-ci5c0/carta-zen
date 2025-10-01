@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CARTA ZEN</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+      <svg id="portada" viewBox="0 0 1414 2000" class="svg-cover" aria-label="Carta Zen">
+        <image href="assets/portada.png" x="0" y="0" width="1414" height="2000" />
+
+        <!-- Hotspots invisibles con tus coordenadas -->
+        <a href="#" aria-label="Frescura" data-pack="frescura">
+          <polygon class="hotspot"
+            points="475,1421 671,1353 672,1690 600,1730" />
+        </a>
+        <a href="#" aria-label="Calma" data-pack="calma">
+          <polygon class="hotspot"
+            points="690,1349 875,1359 778,1669 669,1681" />
+        </a>
+        <a href="#" aria-label="Energía" data-pack="energia">
+          <polygon class="hotspot"
+            points="898,1355 1075,1423 952,1721 782,1651" />
+        </a>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Modal: flip 3D con dos caras (sin fondo negro) -->
+  <dialog id="modal">
+    <div class="modal">
+      <button class="xbtn" onclick="closeModal()" aria-label="Cerrar">×</button>
+
+      <div class="flip-scene" id="flipScene" title="Toca para girar" tabindex="0" aria-live="polite" aria-atomic="true">
+        <div class="flip-card" id="flipCard">
+          <img id="imgFront" class="face front" src="" alt="">
+          <img id="imgBack"  class="face back"  src="" alt="">
+        </div>
+        <div class="loading" id="flipLoading">Cargando…</div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
