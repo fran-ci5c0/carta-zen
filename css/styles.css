@@ -22,10 +22,25 @@ body{
   .screen{ background:#000; border-radius:22px; overflow:hidden; }
   .svg-cover{ border-radius:22px; }
 }
+
+/* ====== MÓVIL: centrar vertical y evitar “cortes” ====== */
 @media (max-width:767.98px){
+  /* sin marcos en móvil */
   .phone{ padding:0; background:transparent; border:none; box-shadow:none; }
-  .screen{ background:transparent; border-radius:0; overflow:visible; }
-  .svg-cover{ border-radius:0; }
+
+  /* centrar verticalmente la portada */
+  .screen{
+    background:transparent; border-radius:0; overflow:visible;
+    min-height:100vh; min-height:100svh;   /* soporta iOS */
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* que la imagen nunca exceda la altura de la pantalla */
+  .svg-cover{
+    border-radius:0;
+    max-height:100vh; max-height:100svh;
+    width:100%; height:auto;
+  }
 }
 
 /* ====== HOTSPOTS ====== */
@@ -47,12 +62,16 @@ a[data-pack="energia"]:focus-visible > .hotspot{
 /* ====== MODAL + FLIP ====== */
 dialog{ border:none; padding:0; background:transparent; }
 dialog:not([open]){ display:none; }
-dialog[open]{ display:grid; place-items:center; }
+dialog[open]{
+  display:grid; place-items:center;
+  overflow:hidden;                 /* <— sin barras en el dialog */
+}
 dialog::backdrop{ background:rgba(10,12,16,.6) }
 
 .modal{
   position:relative; background:transparent; padding:0; margin:0;
   display:grid; place-items:center;
+  overflow:hidden;                 /* <— sin barras dentro */
 }
 
 .xbtn{
@@ -62,14 +81,21 @@ dialog::backdrop{ background:rgba(10,12,16,.6) }
   cursor:pointer; display:grid; place-items:center;
 }
 
-/* flip: el ancho/alto los sincroniza el JS para igualar a la portada */
-.flip-scene{ position:relative; }
+/* El ancho/alto de flip-scene los fija el JS para:
+   - igualar el ancho de la portada
+   - y caber en la altura de la pantalla (sin scroll) */
+.flip-scene{
+  position:relative;
+  overflow:hidden;                 /* <— evita scroll interno */
+}
+
 .flip-card{
   position:absolute; inset:0;
   transform-style:preserve-3d;
   transition: transform 260ms ease;
 }
 .flip-card.is-flipped{ transform:rotateY(180deg); }
+
 .face{
   position:absolute; inset:0; width:100%; height:100%;
   object-fit:contain; backface-visibility:hidden; border-radius:14px;
