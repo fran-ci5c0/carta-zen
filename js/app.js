@@ -25,22 +25,29 @@ function waitFor(img){
   });
 }
 
-/* Ancho real de la portada (SVG renderizado) */
+/* ancho real de la portada (SVG) en pantalla */
 function getPortadaWidth(){
   const box = svg.getBoundingClientRect();
   return Math.max(1, Math.round(box.width));
 }
 
-/* Ajustar modal para que mida EXACTAMENTE lo mismo que la portada */
+/* Ajustar tamaño del modal:
+   - iguala el ancho de la portada
+   - y además cabe en la altura de la pantalla (96% de alto)
+   - sin superar el ancho de la ventana */
 function syncModalSize(){
-  const w = getPortadaWidth();
-  // ancho
-  flipScene.style.width = w + 'px';
-  // alto según proporción de la imagen frontal (fallback 2000/1414)
   const ratio = (imgFront.naturalHeight && imgFront.naturalWidth)
     ? (imgFront.naturalHeight / imgFront.naturalWidth)
-    : (2000/1414);
-  flipScene.style.height = Math.round(w * ratio) + 'px';
+    : (2000/1414); // fallback
+
+  const portadaW   = getPortadaWidth();
+  const maxByVhW   = Math.floor((window.innerHeight * 0.96) / ratio); // ancho máximo para no pasar de 96vh
+  const maxByVwW   = Math.floor(window.innerWidth * 0.96);            // extra seguridad
+  const targetW    = Math.max(1, Math.min(portadaW, maxByVhW, maxByVwW));
+  const targetH    = Math.round(targetW * ratio);
+
+  flipScene.style.width  = targetW + 'px';
+  flipScene.style.height = targetH + 'px';
 }
 
 /* ====== ABRIR / CERRAR MODAL ====== */
@@ -51,17 +58,14 @@ async function openPack(key){
   flipLoading.style.display = 'grid';
   flipCard.classList.remove('is-flipped');
 
-  // Setear ambas caras
+  // setear ambas caras
   imgFront.src = p.front; imgFront.alt = `${p.title} – frente`;
   imgBack.src  = p.back;  imgBack.alt  = `${p.title} – reverso`;
 
-  // Abrir primero para tener layout real
+  // abrir primero para tener layout real y luego ajustar tamaño
   dialog.showModal();
-
-  // Esperar cargas y luego igualar tamaño al de la portada
   await Promise.all([waitFor(imgFront), waitFor(imgBack)]);
   syncModalSize();
-
   flipLoading.style.display = 'none';
 }
 
@@ -94,7 +98,5 @@ svg.querySelectorAll('a[data-pack]').forEach(a=>{
   });
 });
 
-/* Re-sincronizar si cambia el layout (rotación/resize) mientras está abierto */
-window.addEventListener('resize', () => {
-  if (dialog.open) syncModalSize();
-});
+/* Re-sincronizar si rota/cambia el viewport mientras está abierto */
+window.addEventListener('resize', () => { if (dialog.open) syncModalSize(); });
